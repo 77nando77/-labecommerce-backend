@@ -57,13 +57,13 @@ export const users:TUser[] = [
 
 export const products:TProduct[] = [ 
     {
-        id: "15",
+        id: "1",
         name: "Mouse Razer",
         price: 250.00,
         category: Category.PERIFERICS
     },
     {
-        id: "27",
+        id: "2",
         name: "Web Cam Sony",
         price: 340.50,
         category: Category.ELECTRONICS
