@@ -57,13 +57,13 @@ exports.users = [
 ];
 exports.products = [
     {
-        id: "15",
+        id: "1",
         name: "Mouse Razer",
         price: 250.00,
         category: types_1.Category.PERIFERICS
     },
     {
-        id: "27",
+        id: "2",
         name: "Web Cam Sony",
         price: 340.50,
         category: types_1.Category.ELECTRONICS
