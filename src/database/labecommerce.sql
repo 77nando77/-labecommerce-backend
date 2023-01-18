@@ -67,3 +67,46 @@ UPDATE products
 SET
     price = '150.90'
 WHERE id = 2;
+
+
+CREATE TABLE purchases (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    total_price REAL UNIQUE NOT NULL,
+    paid INTEGER NOT NULL,
+    delivered_at TEXT,
+    buyer_id TEXT NOT NULL,
+    Foreign Key (buyer_id) REFERENCES users(id)
+);
+
+DROP TABLE purchases;
+
+SELECT * FROM users;
+
+INSERT INTO purchases (id, total_price, paid, buyer_id)
+VALUES
+    ('p001', 595.99, 0, '1'),
+    ('p002', 450, 0, '2'),
+    ('p003', 1500.50, 0, '2'),
+    ('p004', 744.99, 0, '3');
+
+SELECT * from purchases;
+
+UPDATE purchases
+SET
+    paid = 1,
+    delivered_at = strftime('%d-%m-%Y', 'now')
+WHERE purchases.id = 'p004';
+
+UPDATE purchases
+SET
+    paid = 1,
+    delivered_at = strftime('%d-%m-%Y', 'now')
+WHERE buyer_id = '2';
+
+SELECT * FROM users
+INNER JOIN purchases
+ON purchases.buyer_id = users.id
+WHERE users.id = '1';
+
+
+
