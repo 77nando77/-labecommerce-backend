@@ -14,7 +14,7 @@ CREATE TABLE products (
 
 CREATE TABLE purchases (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    total_price REAL UNIQUE NOT NULL,
+    total_price REAL NOT NULL,
     paid INTEGER NOT NULL,
     delivered_at TEXT,
     buyer_id TEXT NOT NULL,
