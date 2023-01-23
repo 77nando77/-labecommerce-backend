@@ -5,69 +5,12 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
-INSERT INTO users(id,email,password)
-VALUES('1','luiz@gmail.com','123456'),
-('2','jose@gmail.com','54321'),
-('3','marlene@gmail.com','asd1234');
-
-DROP TABLE users;
-
 CREATE TABLE products (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     price REAL NOT NULL,
     category TEXT NOT NULL
 );
-
-INSERT INTO products(id, name, price, category)
-VALUES('1', 'Mouse Razer', 250, 'perifericos'),
-('2', 'Web Cam Sony', 340.50, 'eletronicos'),
-('3', 'Controle Xbox One', 200, 'acessorios'),
-('4', 'Teclado Redragon', 150.50, 'perifericos'),
-('5', 'Monitor Samsung', 1099.99, 'eletronicos');
-
-DROP TABLE products;
-
-SELECT * FROM users
-ORDER BY email ASC;
-
-SELECT * FROM products
-ORDER BY price ASC
-LIMIT 20 OFFSET 0;
-
-SELECT * FROM products
-WHERE price > 100.00 AND price < 300.00
-ORDER BY price ASC;
-
-SELECT * FROM products
-WHERE name LIKE '%te%';
-
-INSERT INTO users (id,email,password)
-VALUES('4', 'gustavo@gmail.com', '147852');
-
-INSERT INTO products (id, name, price, category)
-VALUES('6', 'iPhone', 1200.99, 'eletronicos');
-
-SELECT * FROM products
-WHERE id = 5;
-
-DELETE FROM users
-WHERE id = 4;
-
-DELETE FROM products
-WHERE id = 5;
-
-UPDATE users
-SET 
-    email = 'nando@gmail.com',
-    password = '151515'
-WHERE id = 1;
-
-UPDATE products
-SET
-    price = '150.90'
-WHERE id = 2;
-
 
 CREATE TABLE purchases (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -78,35 +21,150 @@ CREATE TABLE purchases (
     Foreign Key (buyer_id) REFERENCES users(id)
 );
 
-DROP TABLE purchases;
+CREATE TABLE purchases_products(
+    purchase_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (purchase_id) REFERENCES purchases(id)
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
 
-SELECT * FROM users;
+INSERT INTO users(id,email,password)
+VALUES
+    ('u001','luiz@gmail.com','123456'),
+    ('u002','jose@gmail.com','54321'),
+    ('u003','marlene@gmail.com','asd1234');
+
+INSERT INTO products(id, name, price, category)
+VALUES
+    ('p001', 'Mouse Razer', 250, 'perifericos'),
+    ('p002', 'Web Cam Sony', 340.50, 'eletronicos'),
+    ('p003', 'Controle Xbox One', 200, 'acessorios'),
+    ('p004', 'Teclado Redragon', 150.50, 'perifericos'),
+    ('p005', 'Monitor Samsung', 1099.99, 'eletronicos');
 
 INSERT INTO purchases (id, total_price, paid, buyer_id)
 VALUES
-    ('p001', 595.99, 0, '1'),
-    ('p002', 450, 0, '2'),
-    ('p003', 1500.50, 0, '2'),
-    ('p004', 744.99, 0, '3');
+    ('c001', 595.99, 0, 'u001'),
+    ('c002', 450, 0, 'u002'),
+    ('c003', 1500.50, 0, 'u002'),
+    ('c004', 744.99, 0, 'u003');
 
-SELECT * from purchases;
+INSERT INTO purchases_products(purchase_id, product_id, quantity)
+VALUES
+    ('c001','p001','2'),
+    ('c002', 'p005', '1'),
+    ('c004', 'p003', '5');
+
+DROP TABLE users;
+
+DROP TABLE products;
+
+DROP TABLE purchases;
+
+DROP TABLE purchases_products;
+
+
+SELECT * FROM users;
+
+
+SELECT * FROM products;
+
+
+SELECT * FROM purchases;
+
+
+SELECT * FROM purchases_products;
+
+
+SELECT * FROM users
+ORDER BY email ASC;
+
+
+SELECT * FROM products
+ORDER BY price ASC
+LIMIT 20 OFFSET 0;
+
+
+SELECT * FROM products
+WHERE price > 100.00 AND price < 300.00
+ORDER BY price ASC;
+
+
+SELECT * FROM products
+WHERE name LIKE '%te%';
+
+
+INSERT INTO users (id,email,password)
+VALUES('u004', 'gustavo@gmail.com', '147852');
+
+
+INSERT INTO products (id, name, price, category)
+VALUES('6', 'iPhone', 1200.99, 'eletronicos');
+
+
+SELECT * FROM products
+WHERE id = 'p005';
+
+
+DELETE FROM users
+WHERE id = 'u004';
+
+
+DELETE FROM products
+WHERE id = 'p005';
+
+
+UPDATE users
+SET 
+    email = 'nando@gmail.com',
+    password = '151515'
+WHERE id = 'u001';
+
+
+UPDATE products
+SET
+    price = '150.90'
+WHERE id = 'p002';
+
 
 UPDATE purchases
 SET
     paid = 1,
     delivered_at = strftime('%d-%m-%Y', 'now')
-WHERE purchases.id = 'p004';
+WHERE purchases.id = 'c004';
+
 
 UPDATE purchases
 SET
     paid = 1,
     delivered_at = strftime('%d-%m-%Y', 'now')
-WHERE buyer_id = '2';
+WHERE buyer_id = 'u002';
+
 
 SELECT * FROM users
 INNER JOIN purchases
 ON purchases.buyer_id = users.id
-WHERE users.id = '1';
+WHERE users.id = 'u001';
 
 
-
+SELECT 
+    purchases.buyer_id AS userId,
+    users.email AS userEmail,
+    users.password AS userPassword,
+    purchases_products.purchase_id AS purchaseId,
+    purchases_products.product_id AS productId,
+    products.name AS productName,
+    products.category AS productCategory,
+    products.price AS productPrice,
+    purchases_products.quantity AS ProductQuantity,
+    purchases.total_price AS productTotalPrice,
+    purchases.paid AS purchasePaid,
+    purchases.delivered_at AS purchaseDelivered
+FROM purchases_products
+INNER JOIN products
+ON purchases_products.product_id = products.id
+RIGHT JOIN purchases
+ON purchases_products.purchase_id = purchases.id
+INNER JOIN users
+ON buyer_id = users.id;
