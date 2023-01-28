@@ -1,23 +1,26 @@
 -- Active: 1673884993170@@127.0.0.1@3306
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    created_at TEXT DEFAULT (strftime('%d-%m-%Y-%H-%M-%S', 'now','localtime')) 
 );
 
 CREATE TABLE products (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     price REAL NOT NULL,
-    category TEXT NOT NULL
+    description TEXT NOT NULL,
+    image_url TEXT NOT NULL
 );
 
 CREATE TABLE purchases (
-    id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    total_price REAL NOT NULL,
-    paid INTEGER NOT NULL,
-    delivered_at TEXT,
+    id TEXT PRIMARY KEY NOT NULL,
     buyer_id TEXT NOT NULL,
+    total_price REAL NOT NULL,
+    created_at TEXT DEFAULT (strftime('%d-%m-%Y-%H-%M-%S', 'now','localtime')),
+    paid INTEGER,
     Foreign Key (buyer_id) REFERENCES users(id)
 );
 
@@ -29,32 +32,38 @@ CREATE TABLE purchases_products(
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-INSERT INTO users(id,email,password)
+INSERT INTO users(id,name,email,password)
 VALUES
-    ('u001','luiz@gmail.com','123456'),
-    ('u002','jose@gmail.com','54321'),
-    ('u003','marlene@gmail.com','asd1234');
+    ('u001', "luiz", 'luiz@gmail.com','123456'),
+    ('u002', "jose", 'jose@gmail.com','54321'),
+    ('u003', 'marlene', 'marlene@gmail.com','asd1234');
 
-INSERT INTO products(id, name, price, category)
+INSERT INTO products(id, name, price, description, image_url)
 VALUES
-    ('p001', 'Mouse Razer', 250, 'perifericos'),
-    ('p002', 'Web Cam Sony', 340.50, 'eletronicos'),
-    ('p003', 'Controle Xbox One', 200, 'acessorios'),
-    ('p004', 'Teclado Redragon', 150.50, 'perifericos'),
-    ('p005', 'Monitor Samsung', 1099.99, 'eletronicos');
+    ('p001', 'Mouse Razer', 250, 'Mouse Razer gamer com grande precisão e muito conforto para mão.', 'https://picsum.photos/200'),
+    ('p002', 'Headset Corsair', 340.50, 'headset com muito conforto, espuma macia, qualidade de grave e outro sons.', 'https://picsum.photos/200'),
+    ('p003', 'Controle Xbox One', 200, 'controle de Xbox com na cor branca e conectivedade com computadores.','https://picsum.photos/200'),
+    ('p004', 'Teclado Redragon', 150.50, 'teclado mecanico switch azul, teclas com funções multimídia e funcionalidade de bloqueio da tecla Windows.', 'https://picsum.photos/200'),
+    ('p005', 'Monitor Samsung', 1099.99, 'Monitor Gamer Samsung 27 polegadas e 144hz', 'https://picsum.photos/200');
 
-INSERT INTO purchases (id, total_price, paid, buyer_id)
+INSERT INTO purchases (id, buyer_id, total_price, paid)
 VALUES
-    ('c001', 595.99, 0, 'u001'),
-    ('c002', 450, 0, 'u002'),
-    ('c003', 1500.50, 0, 'u002'),
-    ('c004', 744.99, 0, 'u003');
+    ('c001', 'u001', 551, 0),
+    ('c002', 'u002', 831.5, 0),
+    ('c003', 'u002', 1299.99, 0),
+    ('c004', 'u003', 1822.50, 0);
 
 INSERT INTO purchases_products(purchase_id, product_id, quantity)
 VALUES
-    ('c001','p001','2'),
-    ('c002', 'p005', '1'),
-    ('c004', 'p003', '5');
+    ('c001','p001','1'),
+    ('c001','p004','2'),
+    ('c002', 'p002', '2'),
+    ('c002', 'p004', '1'),
+    ('c003', 'p005', '1'),
+    ('c003', 'p003', '1'),
+    ('c004', 'p001', '2'),
+    ('c004', 'p002', '3'),
+    ('c004', 'p004', '2');
 
 DROP TABLE users;
 
